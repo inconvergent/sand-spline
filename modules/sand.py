@@ -13,6 +13,7 @@ from numpy import arange
 from numpy import reshape
 from numpy import ones
 from numpy import zeros
+from numpy import roll
 from numpy.random import random
 from scipy.interpolate import splprep
 from scipy.interpolate import splev
@@ -24,8 +25,8 @@ HPI = pi*0.5
 EDGE = 0.2
 RAD = 0.5-EDGE
 
-INUM = 200
-SNUM = 50
+INUM = 1000
+SNUM = 100
 
 NOISE = 0.1
 
@@ -50,9 +51,9 @@ class Sand(object):
     self.grains = 1
 
   def init(self, n=SNUM, rad=RAD):
-    a = sorted(random(n)*TWOPI)
+    # a = sorted(random(n)*TWOPI)
     # a = random(n)*TWOPI
-    # a = linspace(0, TWOPI, n)
+    a = linspace(0, TWOPI, n)
     self.xy = 0.5+column_stack((cos(a), sin(a)))*rad
 
     self.noise = zeros((n,1), 'float')
@@ -70,7 +71,10 @@ class Sand(object):
 
   def draw(self, render):
     xy = self.interpolated_xy
-    points = column_stack((xy[1:,:], xy[:-1,:]))
+    # points = column_stack((xy[1:,:], xy[:-1,:]))
+    # render.sandstroke(points,self.grains)
+
+    points = column_stack((xy, roll(xy, -1,axis=0)))
     render.sandstroke(points,self.grains)
 
   def step(self):
