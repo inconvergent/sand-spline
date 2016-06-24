@@ -20,7 +20,7 @@ from scipy.interpolate import splev
 TWOPI = pi*2
 HPI = pi*0.5
 
-EDGE = 0.3
+EDGE = 0.2
 RAD = 0.5-EDGE
 
 
@@ -45,8 +45,8 @@ class Sand(object):
 
   def init(self, n=10, rad=RAD):
     # a = sorted(random(n)*TWOPI)
-    # a = random(n)*TWOPI
-    a = linspace(0, TWOPI, n)
+    a = random(n)*TWOPI
+    # a = linspace(0, TWOPI, n)
     self.xy = 0.5+column_stack((cos(a), sin(a)))*rad
 
     self.noise = ones((n,1), 'float')
@@ -69,7 +69,6 @@ class Sand(object):
 
   def step(self):
     self.itt+=1
-
 
     self.noise[:] += (1.0-2.0*random((len(self.noise),1)))*0.01
 
