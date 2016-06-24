@@ -12,6 +12,7 @@ from numpy import cos
 from numpy import arange
 from numpy import reshape
 from numpy import ones
+from numpy import zeros
 from numpy.random import random
 from scipy.interpolate import splprep
 from scipy.interpolate import splev
@@ -23,6 +24,11 @@ HPI = pi*0.5
 EDGE = 0.2
 RAD = 0.5-EDGE
 
+INUM = 200
+SNUM = 50
+
+NOISE = 0.1
+
 
 class Sand(object):
 
@@ -30,7 +36,7 @@ class Sand(object):
       self,
       size,
       fn,
-      inum = 100
+      inum = INUM
     ):
 
     self.itt = 0
@@ -41,15 +47,15 @@ class Sand(object):
 
     self.fn = fn
 
-    self.grains = 5
+    self.grains = 1
 
-  def init(self, n=10, rad=RAD):
-    # a = sorted(random(n)*TWOPI)
-    a = random(n)*TWOPI
+  def init(self, n=SNUM, rad=RAD):
+    a = sorted(random(n)*TWOPI)
+    # a = random(n)*TWOPI
     # a = linspace(0, TWOPI, n)
     self.xy = 0.5+column_stack((cos(a), sin(a)))*rad
 
-    self.noise = ones((n,1), 'float')
+    self.noise = zeros((n,1), 'float')
     self.interpolated_xy = self._interpolate(self.xy, self.inum)
 
   def _interpolate(self, xy, num_points):
@@ -70,12 +76,20 @@ class Sand(object):
   def step(self):
     self.itt+=1
 
-    self.noise[:] += (1.0-2.0*random((len(self.noise),1)))*0.01
+    n = len(self.xy)
+
+    r = (1.0-2.0*random((len(self.noise),1)))
+
+    # scale = reshape(arange(n).astype('float'), (n,1))
+    scale = ones((n,1),'float')
+
+    self.noise[:] += r*scale*NOISE
 
     a = random(len(self.xy))*TWOPI
     rnd = column_stack((cos(a), sin(a)))
 
-    scale = reshape(arange(len(rnd)).astype('float'), (len(rnd),1))
+    # scale = reshape(arange(len(rnd)).astype('float'), (len(rnd),1))
+    scale = ones((len(rnd),1), 'float')
 
     scale *= self.one/3.0
     scale *= self.noise
