@@ -11,9 +11,7 @@ from numpy import sin
 from numpy import cos
 from numpy import arange
 from numpy import reshape
-from numpy import ones
 from numpy import zeros
-from numpy import roll
 from numpy.random import random
 from scipy.interpolate import splprep
 from scipy.interpolate import splev
@@ -26,9 +24,9 @@ EDGE = 0.2
 RAD = 0.5-EDGE
 
 INUM = 1000
-SNUM = 100
+SNUM = 200
 
-NOISE = 0.005
+NOISE = 0.001
 
 
 class Sand(object):
@@ -52,14 +50,11 @@ class Sand(object):
 
   def init(self, n=SNUM, rad=RAD):
     a = sorted(random(n)*TWOPI)
-    # a = random(n)*TWOPI
-    # a = linspace(0, TWOPI, n, endpoint=False)
-
-    # a = arange(n).astype('float')*TWOPI/float(n)
     self.xy = 0.5+column_stack((cos(a), sin(a)))*rad
 
     self.noise = zeros((n,1), 'float')
     self.interpolated_xy = self._interpolate(self.xy, self.inum)
+    self.interpolated_xy_old = self.interpolated_xy[:,:]
 
   def _interpolate(self, xy, num_points):
     tck,u = splprep([
@@ -75,8 +70,7 @@ class Sand(object):
     xy = self.interpolated_xy
     points = column_stack((xy[1:,:], xy[:-1,:]))
     render.sandstroke(points,self.grains)
-
-    # points = column_stack((xy, roll(xy, -1,axis=0)))
+    # points = column_stack((self.interpolated_xy, self.interpolated_xy_old))
     # render.sandstroke(points,self.grains)
 
   def step(self):
@@ -85,21 +79,13 @@ class Sand(object):
     n = len(self.xy)
 
     r = (1.0-2.0*random((len(self.noise),1)))
-
-    # scale = reshape(arange(n).astype('float'), (n,1))
-    scale = ones((n,1),'float')
-
+    scale = reshape(arange(n).astype('float'), (n,1))
     self.noise[:] += r*scale*NOISE
 
     a = random(len(self.xy))*TWOPI
     rnd = column_stack((cos(a), sin(a)))
-
-    scale = reshape(arange(len(rnd)).astype('float'), (len(rnd),1))
-    # scale = ones((len(rnd),1), 'float')
-
-    scale *= self.one/3.0
-    scale *= self.noise
-    self.xy[:,:] += rnd*scale
+    self.xy[:,:] += rnd * self.one*self.noise
+    self.interpolated_xy_old[:,:] = self.interpolated_xy[:,:]
     self.interpolated_xy = self._interpolate(self.xy,self.inum)
 
     return True
