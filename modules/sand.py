@@ -20,7 +20,7 @@ from scipy.interpolate import splev
 TWOPI = pi*2
 HPI = pi*0.5
 
-EDGE = 0.2
+EDGE = 0.3
 RAD = 0.5-EDGE
 
 
@@ -30,7 +30,7 @@ class Sand(object):
       self,
       size,
       fn,
-      inum = 200
+      inum = 100
     ):
 
     self.itt = 0
