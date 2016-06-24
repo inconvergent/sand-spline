@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+from __future__ import division
 
-from render.render import Animate
-from fn import Fn
 
 from numpy import pi
 from numpy import linspace
 from numpy import column_stack
-from numpy import array
-from numpy import dstack
-from numpy import concatenate
-from numpy import transpose
-from numpy import zeros
+from numpy import sin
+from numpy import cos
+from numpy import arange
+from numpy import reshape
+from numpy import ones
 from numpy.random import random
 from scipy.interpolate import splprep
 from scipy.interpolate import splev
@@ -21,9 +20,8 @@ from scipy.interpolate import splev
 TWOPI = pi*2
 HPI = pi*0.5
 
-BACK = [1,1,1,1]
-FRONT = [0,0,0,0.1]
-LIGHT = [0,0,0,0.05]
+EDGE = 0.2
+RAD = 0.5-EDGE
 
 
 class Sand(object):
@@ -31,47 +29,70 @@ class Sand(object):
   def __init__(
       self,
       size,
-      prefix = './res/',
-      back = BACK
+      fn,
+      inum = 200
     ):
+
+    self.itt = 0
 
     self.size = size
     self.one = 1.0/size
+    self.inum = inum
 
-    self.fn = Fn(prefix=prefix, postfix='.png')
-    self.render = Animate(size, back, FRONT, self.wrap)
+    self.fn = fn
 
-    self.render.set_line_width(self.one)
+    self.grains = 5
 
-    self.__init()
+  def init(self, n=10, rad=RAD):
+    # a = sorted(random(n)*TWOPI)
+    # a = random(n)*TWOPI
+    a = linspace(0, TWOPI, n)
+    self.xy = 0.5+column_stack((cos(a), sin(a)))*rad
 
-  def __init(self):
-    self.xy = random(size=(10,2))
-    self.interpolated_xy = self._interpolate(self.xy, 100)
+    self.noise = ones((n,1), 'float')
+    self.interpolated_xy = self._interpolate(self.xy, self.inum)
 
-  def _random_in_range(self, a, b):
-    return a + random()*(b-a)
-
-  def _interpolate(self, xy, num_points=100):
+  def _interpolate(self, xy, num_points):
     tck,u = splprep([
       xy[:,0],
       xy[:,1]],
       s=0
     )
-
     unew = linspace(0, 1, num_points)
     out = splev(unew, tck)
-
     return column_stack(out)
 
   def draw(self, render):
-    render.path(self.interpolated_xy)
+    xy = self.interpolated_xy
+    points = column_stack((xy[1:,:], xy[:-1,:]))
+    render.sandstroke(points,self.grains)
+
+  def step(self):
+    self.itt+=1
+
+
+    self.noise[:] += (1.0-2.0*random((len(self.noise),1)))*0.01
+
+    a = random(len(self.xy))*TWOPI
+    rnd = column_stack((cos(a), sin(a)))
+
+    scale = reshape(arange(len(rnd)).astype('float'), (len(rnd),1))
+
+    scale *= self.one/3.0
+    scale *= self.noise
+    self.xy[:,:] += rnd*scale
+    self.interpolated_xy = self._interpolate(self.xy,self.inum)
+
+    return True
 
   def wrap(self, render):
-    self.step()
+    res = self.step()
     self.draw(render)
 
-    # self.render.write_to_png(self.fn.name())
+    if not self.itt%100:
+      name = self.fn.name()
+      print(self.itt, name)
+      render.write_to_png(name)
 
-    return False
+    return res
 
