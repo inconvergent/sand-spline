@@ -16,7 +16,7 @@ def main():
   from render.render import Animate
   from fn import Fn
 
-  size = 1000
+  size = 2000
 
   fn = Fn(prefix='./res/', postfix='.png')
 

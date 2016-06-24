@@ -26,7 +26,7 @@ RAD = 0.5-EDGE
 INUM = 1000
 SNUM = 200
 
-NOISE = 0.001
+NOISE = 0.0005
 
 
 class Sand(object):
