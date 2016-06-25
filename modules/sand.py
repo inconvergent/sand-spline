@@ -57,9 +57,15 @@ class Sand(object):
       # a = sorted(random(snum)*TWOPI)
       # xy = 0.5+column_stack((cos(a), sin(a)))*rad
 
-      a = ones(snum, 'float') * i/n*TWOPI
-      r = sorted(random(size=(snum, 1))*rad)
-      xy = 0.5+column_stack((cos(a), sin(a)))*r
+      # a = ones(snum, 'float') * i/n*TWOPI
+      # r = sorted(random(size=(snum, 1))*rad)
+      # xy = 0.5+column_stack((cos(a), sin(a)))*r
+
+      edge = 0.5-rad
+      x = linspace(edge, 1.0-edge, snum)
+      y = ones(snum)*(edge + (i/(n-1.0))*2*rad)
+      print(x,y)
+      xy = column_stack((x,y))
 
       interp = self._interpolate(xy, self.inum)
       noise = zeros((snum,1), 'float')

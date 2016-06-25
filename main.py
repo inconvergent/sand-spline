@@ -13,7 +13,7 @@ SIZE = 2000
 EDGE = 0.15
 RAD = 0.5-EDGE
 
-INUM = 400
+INUM = 500
 SNUM = 20
 
 NOISE_STP = 0.005
@@ -36,7 +36,7 @@ def main():
       NOISE_STP,
       fn
       )
-  sand.init(sorted(randint(20,70,20)), RAD)
+  sand.init(sorted(randint(20,70,13)), RAD)
 
   render = Animate(SIZE, BACK, FRONT, sand.wrap)
   render.set_line_width(sand.one)
