@@ -12,6 +12,7 @@ from numpy import cos
 from numpy import arange
 from numpy import reshape
 from numpy import zeros
+from numpy import ones
 from numpy.random import random
 from scipy.interpolate import splprep
 from scipy.interpolate import splev
@@ -20,41 +21,51 @@ from scipy.interpolate import splev
 TWOPI = pi*2
 HPI = pi*0.5
 
-EDGE = 0.2
-RAD = 0.5-EDGE
-
-INUM = 1000
-SNUM = 200
-
-NOISE = 0.0005
-
 
 class Sand(object):
 
   def __init__(
       self,
       size,
-      fn,
-      inum = INUM
-    ):
+      inum,
+      noise_stp,
+      fn
+      ):
 
     self.itt = 0
 
     self.size = size
     self.one = 1.0/size
     self.inum = inum
+    self.noise_stp = noise_stp
 
     self.fn = fn
 
     self.grains = 1
 
-  def init(self, n=SNUM, rad=RAD):
-    a = sorted(random(n)*TWOPI)
-    self.xy = 0.5+column_stack((cos(a), sin(a)))*rad
+    self.xy = []
+    self.interpolated_xy = []
+    self.noise = []
 
-    self.noise = zeros((n,1), 'float')
-    self.interpolated_xy = self._interpolate(self.xy, self.inum)
-    self.interpolated_xy_old = self.interpolated_xy[:,:]
+  def init(self, snums, rad):
+    self.snums = snums
+
+    n = len(snums)
+
+    for i, snum in enumerate(snums):
+
+      # a = sorted(random(snum)*TWOPI)
+      # xy = 0.5+column_stack((cos(a), sin(a)))*rad
+
+      a = ones(snum, 'float') * i/n*TWOPI
+      r = sorted(random(size=(snum, 1))*rad)
+      xy = 0.5+column_stack((cos(a), sin(a)))*r
+
+      interp = self._interpolate(xy, self.inum)
+      noise = zeros((snum,1), 'float')
+      self.noise.append(noise)
+      self.xy.append(xy)
+      self.interpolated_xy.append(interp)
 
   def _interpolate(self, xy, num_points):
     tck,u = splprep([
@@ -67,26 +78,32 @@ class Sand(object):
     return column_stack(out)
 
   def draw(self, render):
-    xy = self.interpolated_xy
-    points = column_stack((xy[1:,:], xy[:-1,:]))
-    render.sandstroke(points,self.grains)
-    # points = column_stack((self.interpolated_xy, self.interpolated_xy_old))
-    # render.sandstroke(points,self.grains)
+
+    for xy in self.interpolated_xy:
+      points = column_stack((xy[1:,:], xy[:-1,:]))
+      render.sandstroke(points,self.grains)
 
   def step(self):
     self.itt+=1
 
-    n = len(self.xy)
+    inum = self.inum
+    one = self.one
+    noise_stp = self.noise_stp
 
-    r = (1.0-2.0*random((len(self.noise),1)))
-    scale = reshape(arange(n).astype('float'), (n,1))
-    self.noise[:] += r*scale*NOISE
+    new_interpolated = []
 
-    a = random(len(self.xy))*TWOPI
-    rnd = column_stack((cos(a), sin(a)))
-    self.xy[:,:] += rnd * self.one*self.noise
-    self.interpolated_xy_old[:,:] = self.interpolated_xy[:,:]
-    self.interpolated_xy = self._interpolate(self.xy,self.inum)
+    for snum,xy,noise in zip(self.snums, self.xy, self.noise):
+
+      r = (1.0-2.0*random((snum,1)))
+      scale = reshape(arange(snum).astype('float'), (snum,1))
+      noise[:] += r*scale*noise_stp
+
+      a = random(snum)*TWOPI
+      rnd = column_stack((cos(a), sin(a)))
+      xy[:,:] += rnd * one*noise
+      new_interpolated.append(self._interpolate(xy,inum))
+
+    self.interpolated_xy = new_interpolated
 
     return True
 
