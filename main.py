@@ -1,22 +1,29 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
 from __future__ import print_function
+
+from numpy import pi
+# from numpy.random import randint
+from numpy.random import random
+from numpy import linspace
+from numpy import column_stack
+from numpy import sin
+from numpy import cos
+from numpy import ones
+
+TWOPI = 2.0*pi
 
 BACK = [1,1,1,1]
 FRONT = [0,0,0,0.05]
 LIGHT = [0,0,0,0.05]
 
-SIZE = 2000
+SIZE = 5500
 
 EDGE = 0.15
 RAD = 0.5-EDGE
-
-INUM = 500
-SNUM = 20
-
-NOISE_STP = 0.005
+INUM = 1500
+NOISE_STP = 0.003
 
 
 def main():
@@ -24,8 +31,6 @@ def main():
   from modules.sand import Sand
   from render.render import Animate
   from fn import Fn
-
-  from numpy.random import randint
 
 
   fn = Fn(prefix='./res/', postfix='.png')
@@ -36,7 +41,30 @@ def main():
       NOISE_STP,
       fn
       )
-  sand.init(sorted(randint(20,70,13)), RAD)
+
+  ## radial lines
+  # n = 50
+  # for i, snum in enumerate(linspace(5,100,n).astype('int')):
+  #   a = ones(snum, 'float') * i/n*TWOPI
+  #   r = sorted(random(size=(snum, 1))*RAD)
+  #   xy = 0.5+column_stack((cos(a), sin(a)))*r
+  #   sand.init(xy)
+
+  ## horizontal lines
+  # n = 50
+  # for i, snum in enumerate(linspace(5,100,n).astype('int')):
+  #   x = linspace(EDGE, 1.0-EDGE, snum)
+  #   y = ones(snum)*(EDGE + (i/(n-1.0))*2*RAD)
+  #   xy = column_stack((x,y))
+  #   sand.init(xy)
+
+  ## sphere
+  n = 50
+  for i, snum in enumerate(linspace(5,100,n).astype('int')):
+    a = sorted(random(snum)*TWOPI)
+    r = ones((snum, 1))*(EDGE + (i/(n-1.0))*(RAD-EDGE))
+    xy = 0.5+column_stack((cos(a), sin(a)))*r
+    sand.init(xy)
 
   render = Animate(SIZE, BACK, FRONT, sand.wrap)
   render.set_line_width(sand.one)

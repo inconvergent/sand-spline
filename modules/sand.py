@@ -12,7 +12,6 @@ from numpy import cos
 from numpy import arange
 from numpy import reshape
 from numpy import zeros
-from numpy import ones
 from numpy.random import random
 from scipy.interpolate import splprep
 from scipy.interpolate import splev
@@ -46,32 +45,16 @@ class Sand(object):
     self.xy = []
     self.interpolated_xy = []
     self.noise = []
+    self.snums = []
 
-  def init(self, snums, rad):
-    self.snums = snums
-
-    n = len(snums)
-
-    for i, snum in enumerate(snums):
-
-      # a = sorted(random(snum)*TWOPI)
-      # xy = 0.5+column_stack((cos(a), sin(a)))*rad
-
-      # a = ones(snum, 'float') * i/n*TWOPI
-      # r = sorted(random(size=(snum, 1))*rad)
-      # xy = 0.5+column_stack((cos(a), sin(a)))*r
-
-      edge = 0.5-rad
-      x = linspace(edge, 1.0-edge, snum)
-      y = ones(snum)*(edge + (i/(n-1.0))*2*rad)
-      print(x,y)
-      xy = column_stack((x,y))
-
-      interp = self._interpolate(xy, self.inum)
-      noise = zeros((snum,1), 'float')
-      self.noise.append(noise)
-      self.xy.append(xy)
-      self.interpolated_xy.append(interp)
+  def init(self, xy):
+    snum = len(xy)
+    self.snums.append(snum)
+    interp = self._interpolate(xy, self.inum)
+    noise = zeros((snum,1), 'float')
+    self.noise.append(noise)
+    self.xy.append(xy)
+    self.interpolated_xy.append(interp)
 
   def _interpolate(self, xy, num_points):
     tck,u = splprep([
@@ -117,7 +100,7 @@ class Sand(object):
     res = self.step()
     self.draw(render)
 
-    if not self.itt%100:
+    if not self.itt%50:
       name = self.fn.name()
       print(self.itt, name)
       render.write_to_png(name)
