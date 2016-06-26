@@ -22,8 +22,8 @@ SIZE = 5500
 
 EDGE = 0.15
 RAD = 0.5-EDGE
-INUM = 1500
-NOISE_STP = 0.003
+INUM = 2000
+NOISE_STP = 0.005
 
 
 def main():
@@ -58,10 +58,18 @@ def main():
   #   xy = column_stack((x,y))
   #   sand.init(xy)
 
-  ## sphere
+  ## messy spheres
+  # n = 50
+  # for i, snum in enumerate(linspace(5,100,n).astype('int')):
+  #   a = sorted(random(snum)*TWOPI)
+  #   r = ones((snum, 1))*(EDGE + (i/(n-1.0))*(RAD-EDGE))
+  #   xy = 0.5+column_stack((cos(a), sin(a)))*r
+  #   sand.init(xy)
+
+  ## tidy spheres
   n = 50
-  for i, snum in enumerate(linspace(5,100,n).astype('int')):
-    a = sorted(random(snum)*TWOPI)
+  for i, snum in enumerate(linspace(20,80,n).astype('int')):
+    a = linspace(0,TWOPI, snum)
     r = ones((snum, 1))*(EDGE + (i/(n-1.0))*(RAD-EDGE))
     xy = 0.5+column_stack((cos(a), sin(a)))*r
     sand.init(xy)
