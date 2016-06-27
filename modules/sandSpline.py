@@ -21,8 +21,7 @@ TWOPI = pi*2
 HPI = pi*0.5
 
 
-class Sand(object):
-
+class SandSpline(object):
   def __init__(
       self,
       size,
@@ -67,7 +66,6 @@ class Sand(object):
     return column_stack(out)
 
   def draw(self, render):
-
     for xy in self.interpolated_xy:
       points = column_stack((xy[1:,:], xy[:-1,:]))
       render.sandstroke(points,self.grains)
@@ -82,7 +80,6 @@ class Sand(object):
     new_interpolated = []
 
     for snum,xy,noise in zip(self.snums, self.xy, self.noise):
-
       r = (1.0-2.0*random((snum,1)))
       scale = reshape(arange(snum).astype('float'), (snum,1))
       noise[:] += r*scale*noise_stp

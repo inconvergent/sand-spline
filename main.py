@@ -22,20 +22,20 @@ SIZE = 5500
 
 EDGE = 0.15
 RAD = 0.5-EDGE
-INUM = 2000
+INUM = 5000
 NOISE_STP = 0.005
 
 
 def main():
 
-  from modules.sand import Sand
+  from modules.sandSpline import SandSpline
   from render.render import Animate
   from fn import Fn
 
 
   fn = Fn(prefix='./res/', postfix='.png')
 
-  sand = Sand(
+  sand = SandSpline(
       SIZE,
       INUM,
       NOISE_STP,
@@ -67,12 +67,18 @@ def main():
   #   sand.init(xy)
 
   ## tidy spheres
-  n = 50
-  for i, snum in enumerate(linspace(20,80,n).astype('int')):
-    a = linspace(0,TWOPI, snum)
-    r = ones((snum, 1))*(EDGE + (i/(n-1.0))*(RAD-EDGE))
-    xy = 0.5+column_stack((cos(a), sin(a)))*r
-    sand.init(xy)
+  # n = 50
+  # for i, snum in enumerate(linspace(20,80,n).astype('int')):
+  #   a = linspace(0,TWOPI, snum)
+  #   r = ones((snum, 1))*(EDGE + (i/(n-1.0))*(RAD-EDGE))
+  #   xy = 0.5+column_stack((cos(a), sin(a)))*r
+  #   sand.init(xy)
+
+  ## sphere
+  snum = 60
+  a = linspace(0,TWOPI, snum)
+  xy = 0.5+column_stack((cos(a), sin(a)))*RAD
+  sand.init(xy)
 
   render = Animate(SIZE, BACK, FRONT, sand.wrap)
   render.set_line_width(sand.one)
