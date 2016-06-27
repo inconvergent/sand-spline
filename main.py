@@ -18,11 +18,11 @@ BACK = [1,1,1,1]
 FRONT = [0,0,0,0.05]
 LIGHT = [0,0,0,0.05]
 
-SIZE = 5500
+SIZE = 3000
 
 EDGE = 0.15
 RAD = 0.5-EDGE
-INUM = 5000
+INUM = 3000
 NOISE_STP = 0.005
 
 
@@ -59,12 +59,13 @@ def main():
   #   sand.init(xy)
 
   ## messy spheres
-  # n = 50
-  # for i, snum in enumerate(linspace(5,100,n).astype('int')):
-  #   a = sorted(random(snum)*TWOPI)
-  #   r = ones((snum, 1))*(EDGE + (i/(n-1.0))*(RAD-EDGE))
-  #   xy = 0.5+column_stack((cos(a), sin(a)))*r
-  #   sand.init(xy)
+  n = 10
+  for i, snum in enumerate(linspace(20,100,n).astype('int')):
+    a = sorted(random(snum)*TWOPI)
+    # r = ones((snum, 1))*(EDGE + (i/(n-1.0))*(RAD-EDGE))
+    r = RAD
+    xy = 0.5+column_stack((cos(a), sin(a)))*r
+    sand.init(xy)
 
   ## tidy spheres
   # n = 50
@@ -75,10 +76,10 @@ def main():
   #   sand.init(xy)
 
   ## sphere
-  snum = 60
-  a = linspace(0,TWOPI, snum)
-  xy = 0.5+column_stack((cos(a), sin(a)))*RAD
-  sand.init(xy)
+  # snum = 60
+  # a = linspace(0,TWOPI, snum)
+  # xy = 0.5+column_stack((cos(a), sin(a)))*RAD
+  # sand.init(xy)
 
   render = Animate(SIZE, BACK, FRONT, sand.wrap)
   render.set_line_width(sand.one)
