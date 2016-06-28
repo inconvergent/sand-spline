@@ -50,7 +50,6 @@ class GuidedSandSpline(object):
 
     r = (1.0-2.0*random(pnum))
     scale = arange(pnum).astype('float')
-    # print(self.noise, scale)
     self.noise[:] += r*scale*self.stp
 
     a = random(pnum)*TWOPI
