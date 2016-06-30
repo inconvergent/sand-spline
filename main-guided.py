@@ -6,11 +6,17 @@ from __future__ import division
 
 from numpy import pi
 from numpy.random import randint
+from numpy.random import random
 
 from numpy import linspace
+from numpy import arange
 from numpy import zeros
 from numpy import ones
 from numpy import column_stack
+from numpy import cos
+from numpy import sin
+
+from modules.helpers import _interpolate
 
 TWOPI = 2.0*pi
 
@@ -18,24 +24,33 @@ BACK = [1,1,1,1]
 FRONT = [0,0,0,0.05]
 LIGHT = [0,0,0,0.05]
 
-SIZE = 3000
+SIZE = 5000
 PIX = 1.0/SIZE
+
+GRID_X = 20
+GRID_Y = 20
+GNUM = 5
 
 EDGE = 0.08
 RAD = 0.5-EDGE
+LEAP_X = (1.0-2*EDGE)/(GRID_X-1)*0.5*0.75
+LEAP_Y = (1.0-2*EDGE)/(GRID_Y-1)*0.5*0.75
 
-NOISE_STP = 0.005
+STEPS = 300
+INUM = 2000
+
+
+STP = 0.00001
+
 
 GRAINS = 1
 
-GRID_SIZE = 30
 
-GNUM = 5
+print('LEAP_Y', LEAP_Y)
+print('LEAP_X', LEAP_X)
+# print('STEPS', STEPS)
+print('INUM', INUM)
 
-GUIDE_NOISE = 0.05
-STP = 0.000008
-
-INUM = 300
 
 def draw(render, xy):
   points = column_stack((xy[1:,:], xy[:-1,:]))
@@ -45,34 +60,40 @@ def spline_iterator():
   from modules.guidedSandSpline import GuidedSandSpline
 
   itt = 0
-  leap = (1.0-2*EDGE)/(GRID_SIZE-1)*0.5*0.75
-  print('leap', leap)
-
-  for i, a in enumerate(linspace(EDGE, 1.0-EDGE, GRID_SIZE)):
-    for j, b in enumerate(linspace(EDGE, 1.0-EDGE, GRID_SIZE)):
+  for i, x in enumerate(linspace(EDGE, 1.0-EDGE, GRID_X)):
+    for j, y in enumerate(linspace(EDGE, 1.0-EDGE, GRID_Y)):
       itt += 1
-      gx = linspace(a-leap,a+leap,GNUM,'float')
-      gy = b*ones(GNUM,'float')
+
+      ## horizontal line
+      # gx = linspace(x-LEAP_X,x+LEAP_X,GNUM,'float')
+      # gy = y*ones(GNUM,'float')
+      # guide = _interpolate(column_stack((gx, gy)), STEPS)
+
+      ## same position
+      gx = x*ones((i+1)*10,'float')
+      gy = y*ones((i+1)*10,'float')
       guide = column_stack((gx, gy))
 
-      # pnum = randint(5,100)
-      # inum = randint(10,500)
-      # steps = randint(10,500)
+      pnum = 10+j
 
-      pnum = 4+i*2
-      steps = 20*(j+1)
+      ## vertical line
+      # px = zeros(pnum,'float')
+      # py = linspace(-1,1,pnum,'float')*LEAP_Y
+      # path = column_stack((px, py))
 
-      px = zeros(pnum,'float')
-      py = linspace(-1,1,pnum,'float')*leap
-      path = column_stack((px, py))
+      ## circle
+      a = random()*TWOPI + linspace(0, TWOPI, pnum)
+      px = cos(a)
+      py = sin(a)
+      path = column_stack((px, py)) * LEAP_Y
 
+      scale = arange(pnum).astype('float')*STP
 
       s = GuidedSandSpline(
           guide,
           path,
-          inum=INUM,
-          steps=steps,
-          stp=STP
+          INUM,
+          scale
           )
       yield itt, s
 
@@ -90,7 +111,9 @@ def main():
     import sys, traceback
     try:
       i, spline = si.next()
-      print(i)
+      if not i%5:
+        print(i)
+        render.write_to_png(fn.name())
       for xy in spline:
         draw(render, xy)
       return True

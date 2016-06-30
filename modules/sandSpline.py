@@ -5,7 +5,6 @@ from __future__ import division
 
 
 from numpy import pi
-from numpy import linspace
 from numpy import column_stack
 from numpy import sin
 from numpy import cos
@@ -13,8 +12,8 @@ from numpy import arange
 from numpy import reshape
 from numpy import zeros
 from numpy.random import random
-from scipy.interpolate import splprep
-from scipy.interpolate import splev
+
+from helpers import _interpolate
 
 
 TWOPI = pi*2
@@ -49,21 +48,11 @@ class SandSpline(object):
   def init(self, xy):
     snum = len(xy)
     self.snums.append(snum)
-    interp = self._interpolate(xy, self.inum)
+    interp = _interpolate(xy, self.inum)
     noise = zeros((snum,1), 'float')
     self.noise.append(noise)
     self.xy.append(xy)
     self.interpolated_xy.append(interp)
-
-  def _interpolate(self, xy, num_points):
-    tck,u = splprep([
-      xy[:,0],
-      xy[:,1]],
-      s=0
-    )
-    unew = linspace(0, 1, num_points)
-    out = splev(unew, tck)
-    return column_stack(out)
 
   def draw(self, render):
     for xy in self.interpolated_xy:
@@ -87,7 +76,7 @@ class SandSpline(object):
       a = random(snum)*TWOPI
       rnd = column_stack((cos(a), sin(a)))
       xy[:,:] += rnd * one*noise
-      new_interpolated.append(self._interpolate(xy,inum))
+      new_interpolated.append(_interpolate(xy,inum))
 
     self.interpolated_xy = new_interpolated
 
