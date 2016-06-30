@@ -4,22 +4,15 @@
 from __future__ import print_function
 from __future__ import division
 
-from copy import copy
-
 from numpy import pi
 from numpy import array
-from numpy.random import randint
 from numpy.random import random
 
 from numpy import linspace
 from numpy import arange
-from numpy import zeros
-from numpy import ones
 from numpy import column_stack
 from numpy import cos
 from numpy import sin
-
-from modules.helpers import _interpolate
 
 TWOPI = 2.0*pi
 
@@ -27,11 +20,11 @@ BACK = [1,1,1,1]
 FRONT = [0,0,0,0.05]
 LIGHT = [0,0,0,0.05]
 
-SIZE = 1500
+SIZE = 512
 PIX = 1.0/SIZE
 
-GRID_X = 10
-GRID_Y = 10
+GRID_X = 7
+GRID_Y = 7
 GNUM = 5
 
 EDGE = 0.08
@@ -40,10 +33,10 @@ LEAP_X = (1.0-2*EDGE)/(GRID_X-1)*0.5*0.75
 LEAP_Y = (1.0-2*EDGE)/(GRID_Y-1)*0.5*0.75
 
 STEPS = 300
-INUM = 2000
+INUM = 100
 
 
-STP = 0.0005
+STP = 0.00005
 
 
 GRAINS = 1
@@ -99,6 +92,7 @@ def spline_iterator():
 
 def main():
 
+  import sys, traceback
   from render.render import Animate
   from fn import Fn
 
@@ -107,11 +101,10 @@ def main():
   si = spline_iterator()
 
   def wrap(render):
-    import sys, traceback
     try:
       itt, xy = si.next()
       draw(render, xy)
-      if not itt%(GRID_Y*GRID_X):
+      if not itt%(20*GRID_Y*GRID_X):
         print(itt)
         render.write_to_png(fn.name())
       return True
