@@ -8,7 +8,6 @@ from numpy import pi
 from numpy import column_stack
 from numpy import sin
 from numpy import cos
-from numpy import ones
 from numpy import reshape
 from numpy import zeros
 from numpy.random import random
@@ -33,7 +32,6 @@ class GuidedSandSpline(object):
 
     self.pnum = len(path)
     self.interpolated_path = _interpolate(path, inum)
-    self.steps = len(guide)
     self.guide = guide
     self.noise = zeros(self.pnum,'float')
     self.i = 0
@@ -42,7 +40,9 @@ class GuidedSandSpline(object):
       return self
 
   def next(self):
-    if self.i>=self.steps:
+    try:
+      g = self.guide.next()
+    except Exception:
       raise StopIteration
 
     pnum = self.pnum
@@ -57,5 +57,5 @@ class GuidedSandSpline(object):
     self.interpolated_path = _interpolate(self.path, self.inum)
 
     self.i+=1
-    return self.guide[self.i-1, :] + self.interpolated_path
+    return g + self.interpolated_path
 
