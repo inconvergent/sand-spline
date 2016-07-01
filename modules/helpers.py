@@ -18,3 +18,7 @@ def _interpolate(xy, num_points):
   out = splev(unew, tck)
   return column_stack(out)
 
+def draw(render, xy, grains=1):
+  points = column_stack((xy[1:,:], xy[:-1,:]))
+  render.sandstroke(points,grains)
+

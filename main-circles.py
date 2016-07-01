@@ -10,6 +10,7 @@ from numpy.random import random
 
 from numpy import linspace
 from numpy import arange
+from numpy import zeros
 from numpy import column_stack
 from numpy import cos
 from numpy import sin
@@ -20,11 +21,11 @@ BACK = [1,1,1,1]
 FRONT = [0,0,0,0.05]
 LIGHT = [0,0,0,0.05]
 
-SIZE = 512
+SIZE = 2048
 PIX = 1.0/SIZE
 
-GRID_X = 7
-GRID_Y = 7
+GRID_X = 12
+GRID_Y = 12
 GNUM = 5
 
 EDGE = 0.08
@@ -33,54 +34,42 @@ LEAP_X = (1.0-2*EDGE)/(GRID_X-1)*0.5*0.75
 LEAP_Y = (1.0-2*EDGE)/(GRID_Y-1)*0.5*0.75
 
 STEPS = 300
-INUM = 100
+INUM = 500
 
 
 STP = 0.00005
 
 
-GRAINS = 1
-
-
 print('LEAP_Y', LEAP_Y)
 print('LEAP_X', LEAP_X)
-# print('STEPS', STEPS)
-print('INUM', INUM)
 
-
-def draw(render, xy):
-  points = column_stack((xy[1:,:], xy[:-1,:]))
-  render.sandstroke(points,GRAINS)
 
 def f(x, y):
   while True:
     yield array([[x,y]])
 
-def guides():
-  res = []
-  for x in linspace(EDGE, 1.0-EDGE, GRID_X):
-    for y in linspace(EDGE, 1.0-EDGE, GRID_Y):
-      res.append(f(x,y))
-  return res
-
 def spline_iterator():
-  from modules.guidedSandSpline import GuidedSandSpline
+  from modules.sandSpline import SandSpline
 
   splines = []
-  for guide in guides():
+  for x in linspace(EDGE, 1.0-EDGE, GRID_X):
+    for y in linspace(EDGE, 1.0-EDGE, GRID_Y):
+      guide = f(x,y)
+      pnum = 10
 
-    pnum = 10
-    a = random()*TWOPI + linspace(0, TWOPI, pnum)
-    path = column_stack((cos(a), sin(a))) * LEAP_Y
-    scale = arange(pnum).astype('float')*STP
+      ## circles
+      a = random()*TWOPI + linspace(0, TWOPI, pnum)
+      path = column_stack((cos(a), sin(a))) * LEAP_Y
 
-    s = GuidedSandSpline(
-        guide,
-        path,
-        INUM,
-        scale
-        )
-    splines.append(s)
+      scale = arange(pnum).astype('float')*STP
+
+      s = SandSpline(
+          guide,
+          path,
+          INUM,
+          scale
+          )
+      splines.append(s)
 
   itt = 0
   while True:
@@ -95,6 +84,7 @@ def main():
   import sys, traceback
   from render.render import Animate
   from fn import Fn
+  from modules.helpers import draw
 
 
   fn = Fn(prefix='./res/', postfix='.png')
