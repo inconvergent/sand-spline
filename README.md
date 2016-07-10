@@ -7,8 +7,11 @@
 If you recognize the effect it may be because you have seen it before:
 
 http://www.complexification.net/gallery/machines/sandstroke/
+
 http://www.complexification.net/gallery/machines/sandDollar/
+
 http://www.complexification.net/gallery/machines/limbsandstroke/
+
 http://www.complexification.net/gallery/machines/sandTraveler/
 
 
