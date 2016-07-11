@@ -19,7 +19,7 @@ http://www.complexification.net/gallery/machines/sandTraveler/
 
 In order for this code to run you must first download and install:
 
-*    `render`: https://github.com/inconvergent/render
+*    `fast sand paint`: https://github.com/inconvergent/fast-sand-paint
 *    `fn`: https://github.com/inconvergent/fn
 
 ## Other Dependencies
@@ -27,5 +27,5 @@ In order for this code to run you must first download and install:
 The code also depends on:
 
 *    `numpy`
-*    `python-cairo` (do not install with pip, this generally does not work)
+*    `scipy`
 

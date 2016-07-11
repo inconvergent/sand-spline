@@ -1,8 +1,6 @@
 res/*
 *.swp
 *.*~
-profile.profile
 *.pyc
-.ropeproject
 build
-profile/*
+__pycache__
