@@ -30,29 +30,31 @@ def _rnd_interpolate(xy, num_points, ordered=False):
   out = splev(unew, tck)
   return column_stack(out)
 
-def get_colors(f):
+def get_colors(f, do_shuffle=True):
+  from numpy import array
   try:
     import Image
   except Exception:
     from PIL import Image
-  from numpy.random import shuffle
 
-  scale = 1./255.
   im = Image.open(f)
-  w,h = im.size
-  rgbim = im.convert('RGB')
-  res = []
-  for i in range(w):
-    for j in range(h):
-      r,g,b = rgbim.getpixel((i,j))
-      res.append([r*scale,g*scale,b*scale])
+  data = array(list(im.convert('RGB').getdata()),'float')/255.0
 
-  shuffle(res)
+  res = []
+  for rgb in data:
+    res.append(list(rgb))
+
+  if do_shuffle:
+    from numpy.random import shuffle
+    shuffle(res)
   return res
 
-def get_img_size(f):
+def get_img_as_rgb_array(f):
   from PIL import Image
+  from numpy import array
+  from numpy import reshape
   im = Image.open(f)
   w,h = im.size
-  return w,h
+  data = array(list(im.convert('RGB').getdata()), 'float')/255.0
+  return reshape(data,(w,h,3))
 

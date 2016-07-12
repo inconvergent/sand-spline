@@ -12,7 +12,7 @@ from numpy import arange
 from numpy import column_stack
 from numpy import cos
 from numpy import sin
-from modules.helpers import get_img_size
+from modules.helpers import get_img_as_rgb_array
 
 BG = [1,1,1,1]
 BACK = [1,1,1,1]
@@ -21,9 +21,10 @@ FRONT = [0,0,0,0.5]
 TWOPI = 2.0*pi
 
 
-IMG = './img/check-bw.png'
+IMGNAME = './img/check-bw.png'
+img = get_img_as_rgb_array(IMGNAME)
+SIZE = img.shape[0]
 
-SIZE = get_img_size(IMG)[0]
 PIX = 1.0/SIZE
 
 CNUM = 50
@@ -110,7 +111,7 @@ def main():
   from sand import Sand
 
   sand = Sand(SIZE)
-  sand.set_bg_from_image(IMG)
+  sand.set_bg_from_rgb_array(img)
   sand.set_rgba(FRONT)
 
   fn = Fn(prefix='./res/', postfix='.png')
@@ -122,8 +123,7 @@ def main():
       # sand.distort_dots_swap(xy)
       sand.distort_dots_wind(xy)
 
-      # sand.paint_dots(xy)
-      if not itt%500:
+      if not itt%5000:
         print(itt)
         sand.write_to_png(fn.name())
     except Exception:
