@@ -10,27 +10,21 @@ from numpy import pi
 from numpy import array
 
 BG = [1,1,1,1]
-FRONT = [0,0,0,0.05]
-
-
-TWOPI = 2.0*pi
-
-BACK = [1,1,1,1]
-FRONT = [0,0,0,0.01]
+FRONT = [0,0,0,0.001]
 
 SIZE = 13000
 
 EDGE = 0.08
 
-INUM = 5*SIZE
+INUM = 20*SIZE
 
-STP = 0.00000003
+STP = 0.0000003*0.15
 
 GAMMA = 1.5
 
 
 def f():
-  for x in linspace(EDGE, 1.0-EDGE, SIZE*5):
+  for x in linspace(EDGE, 1.0-EDGE, SIZE*10):
     yield array([[x, 0.0]])
 
 def spline_iterator():
