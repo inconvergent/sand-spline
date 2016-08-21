@@ -3,36 +3,29 @@
 
 from numpy import pi
 from numpy import array
-from numpy.random import random
 from numpy.random import randint
 
 from numpy import linspace
 from numpy import arange
 from numpy import column_stack
-from numpy import cos
-from numpy import sin
+from numpy import zeros
 
 BG = [1,1,1,1]
 FRONT = [0,0,0,0.01]
 
 TWOPI = 2.0*pi
 
-SIZE = 10000
-PIX = 1.0/SIZE
+SIZE = 5000
 
-GRID_X = 15
-GRID_Y = 15
-GNUM = 5
+GRID_X = 10
+GRID_Y = 10
 
 EDGE = 0.08
-RAD = 0.5-EDGE
-LEAP_X = (1.0-2*EDGE)/(GRID_X-1)*0.5*0.75
 LEAP_Y = (1.0-2*EDGE)/(GRID_Y-1)*0.5*0.75
 
-STEPS = 300
-INUM = 2000
+INUM = 1000
 
-GAMMA = 2.2
+GAMMA = 2.0
 
 STP = 0.0000001
 
@@ -48,10 +41,14 @@ def spline_iterator():
   for x in linspace(EDGE, 1.0-EDGE, GRID_X):
     for y in linspace(EDGE, 1.0-EDGE, GRID_Y):
       guide = f(x,y)
-      pnum = randint(10,150)
+      pnum = randint(5,50)
 
-      a = random()*TWOPI + linspace(0, TWOPI, pnum)
-      path = column_stack((cos(a), sin(a))) * LEAP_Y
+      # a = random()*TWOPI + linspace(0, TWOPI, pnum)
+      # path = column_stack((cos(a), sin(a))) * LEAP_Y
+
+      xx = zeros(pnum);
+      yy = linspace(-LEAP_Y, LEAP_Y, pnum)
+      path = column_stack((xx,yy))
 
       scale = arange(pnum).astype('float')*STP
 
@@ -90,10 +87,10 @@ def main():
   while True:
     try:
       itt, w, xy = next(si)
-      rgba = colors[w%nc] + [0.005]
+      rgba = colors[w%nc] + [0.001]
       sand.set_rgba(rgba)
       sand.paint_dots(xy)
-      if not itt%(700*GRID_Y*GRID_X):
+      if not itt%(30000):
         print(itt)
         sand.write_to_png(fn.name(), GAMMA)
     except Exception as e:
