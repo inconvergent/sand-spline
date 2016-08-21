@@ -20,7 +20,7 @@ http://www.complexification.net/gallery/machines/sandTraveler/
 In order for this code to run you must first download and install:
 
 *    `fast sand paint`: https://github.com/inconvergent/fast-sand-paint
-*    `fn`: https://github.com/inconvergent/fn
+*    `fn`: https://github.com/inconvergent/fn-python3
 
 ## Other Dependencies
 
