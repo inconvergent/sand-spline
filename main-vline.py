@@ -10,21 +10,25 @@ from numpy import pi
 from numpy import array
 
 BG = [1,1,1,1]
-FRONT = [0,0,0,0.001]
+FRONT = [0,0,0,0.01]
 
 SIZE = 13000
 
 EDGE = 0.08
 
-INUM = 20*SIZE
+INUM = 10*SIZE
 
-STP = 0.0000003*0.15
+STP = 0.0000003*0.15*5
 
 GAMMA = 1.5
 
+print('stp', STP)
+print('inum', INUM)
+
+
 
 def f():
-  for x in linspace(EDGE, 1.0-EDGE, SIZE*10):
+  for x in linspace(EDGE, 1.0-EDGE, SIZE*2):
     yield array([[x, 0.0]])
 
 def spline_iterator():
@@ -33,7 +37,9 @@ def spline_iterator():
   splines = []
   guide = f()
 
-  pnum = randint(4,100)
+  # pnum = randint(4,100)
+  pnum = 45
+  print('pnum', pnum)
   px = zeros(pnum,'float')
   py = linspace(EDGE, 1.0-EDGE, pnum)
   path = column_stack([px,py])
@@ -73,8 +79,9 @@ def main():
       itt, w, xy = next(si)
       sand.paint_dots(xy)
       if not itt%(SIZE):
-        print(itt)
-      #   sand.write_to_png(fn.name(), GAMMA)
+        name = fn.name()
+        print(itt, name)
+        sand.write_to_png(name, GAMMA)
     except Exception as e:
       print(e)
       sand.write_to_png(fn.name(), GAMMA)
