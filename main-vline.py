@@ -9,18 +9,21 @@ from numpy import column_stack
 from numpy import pi
 from numpy import array
 
+from iutils.random import random_points_in_circle
+
 BG = [1,1,1,1]
-FRONT = [0,0,0,0.01]
+FRONT = [0,0,0,0.012]
 
 SIZE = 13000
+ONE = 1.0/SIZE
 
 EDGE = 0.08
 
-INUM = 10*SIZE
+INUM = 5*SIZE
 
-STP = 0.0000003*0.15*5
+STP = 0.0000003*0.15*3
 
-GAMMA = 1.5
+GAMMA = 1.4
 
 print('stp', STP)
 print('inum', INUM)
@@ -28,7 +31,7 @@ print('inum', INUM)
 
 
 def f():
-  for x in linspace(EDGE, 1.0-EDGE, SIZE*2):
+  for x in linspace(EDGE, 1.0-EDGE, SIZE*3):
     yield array([[x, 0.0]])
 
 def spline_iterator():
@@ -77,7 +80,7 @@ def main():
   while True:
     try:
       itt, w, xy = next(si)
-      sand.paint_dots(xy)
+      sand.paint_dots(xy+random_points_in_circle(INUM, 0, 0, ONE*1.5))
       if not itt%(SIZE):
         name = fn.name()
         print(itt, name)
