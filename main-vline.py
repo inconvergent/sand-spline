@@ -23,7 +23,7 @@ INUM = 5*SIZE
 
 STP = 0.0000003*0.15*3
 
-GAMMA = 1.4
+GAMMA = 1.5
 
 print('stp', STP)
 print('inum', INUM)
@@ -40,8 +40,8 @@ def spline_iterator():
   splines = []
   guide = f()
 
-  # pnum = randint(4,100)
-  pnum = 45
+  pnum = randint(25,55)
+  # pnum = 45
   print('pnum', pnum)
   px = zeros(pnum,'float')
   py = linspace(EDGE, 1.0-EDGE, pnum)
@@ -80,11 +80,11 @@ def main():
   while True:
     try:
       itt, w, xy = next(si)
-      sand.paint_dots(xy+random_points_in_circle(INUM, 0, 0, ONE*1.5))
+      sand.paint_dots(xy+random_points_in_circle(INUM, 0, 0, ONE*1.6))
       if not itt%(SIZE):
-        name = fn.name()
-        print(itt, name)
-        sand.write_to_png(name, GAMMA)
+        # name = fn.name()
+        print(itt, w)
+        # sand.write_to_png(name, GAMMA)
     except Exception as e:
       print(e)
       sand.write_to_png(fn.name(), GAMMA)
