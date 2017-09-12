@@ -12,14 +12,14 @@ from numpy import array
 from iutils.random import random_points_in_circle
 
 BG = [1,1,1,1]
-FRONT = [0,0,0,0.012]
+FRONT = [0,0,0,0.006]
 
 SIZE = 13000
 ONE = 1.0/SIZE
 
 EDGE = 0.08
 
-INUM = 5*SIZE
+INUM = 10*SIZE
 
 STP = 0.0000003*0.15*3
 
