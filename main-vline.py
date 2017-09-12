@@ -80,7 +80,8 @@ def main():
   while True:
     try:
       itt, w, xy = next(si)
-      sand.paint_dots(xy+random_points_in_circle(INUM, 0, 0, ONE*1.6))
+      fuzz = random_points_in_circle(INUM, 0, 0, ONE*3.2)
+      sand.paint_dots(xy+fuzz)
       if not itt%(SIZE):
         # name = fn.name()
         print(itt, w)
